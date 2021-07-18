@@ -4,6 +4,8 @@ import (
 	//	"bufio"
 	"fmt"
 	"os"
+
+	gt "github.com/rebay1982/gotracer/internal/gotracer"
 )
 
 func main() {
@@ -24,13 +26,11 @@ func main() {
 	for j := ny - 1; j >= 0; j-- {
 		for i := 0; i < nx; i++ {
 
-			var r float64 = float64(i) / float64(nx)
-			var g float64 = float64(j) / float64(ny)
-			var b float64 = 0.2
+			colour := gt.New(float64(i)/float64(nx), float64(j)/float64(ny), 0.2)
 
-			var ir = int(255.99 * r)
-			var ig = int(255.99 * g)
-			var ib = int(255.99 * b)
+			var ir = int(255.99 * colour.R())
+			var ig = int(255.99 * colour.G())
+			var ib = int(255.99 * colour.B())
 
 			fmt.Fprintf(f, "%d %d %d\n", ir, ig, ib)
 		}
