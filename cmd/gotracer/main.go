@@ -26,7 +26,7 @@ func main() {
 	for j := ny - 1; j >= 0; j-- {
 		for i := 0; i < nx; i++ {
 
-			colour := gt.New(float64(i)/float64(nx), float64(j)/float64(ny), 0.2)
+			colour := gt.NewVec3(float64(i)/float64(nx), float64(j)/float64(ny), 0.2)
 
 			var ir = int(255.99 * colour.R())
 			var ig = int(255.99 * colour.G())

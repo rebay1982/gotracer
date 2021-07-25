@@ -1,4 +1,4 @@
-package gotracier
+package gotracer
 
 import "math"
 
@@ -6,7 +6,7 @@ type Vec3 struct {
 	e [3]float64
 }
 
-func New(x, y, z float64) *Vec3 {
+func NewVec3(x, y, z float64) *Vec3 {
 	return &Vec3{e: [3]float64{x, y, z}}
 }
 
@@ -36,30 +36,30 @@ func (v *Vec3) B() float64 {
 }
 
 // Basic Operators
-func (v *Vec3) Add(v2 Vec3) *Vec3 {
-	return &Vec3{e: [3]float64{v.e[0] + v2.e[0], v.e[1] + v2.e[1], v.e[2] + v2.e[2]}}
+func (v *Vec3) Add(v2 Vec3) Vec3 {
+	return Vec3{e: [3]float64{v.e[0] + v2.e[0], v.e[1] + v2.e[1], v.e[2] + v2.e[2]}}
 }
 
-func (v *Vec3) Sub(v2 Vec3) *Vec3 {
-	return &Vec3{e: [3]float64{v.e[0] - v2.e[0], v.e[1] - v2.e[1], v.e[2] - v2.e[2]}}
+func (v *Vec3) Sub(v2 Vec3) Vec3 {
+	return Vec3{e: [3]float64{v.e[0] - v2.e[0], v.e[1] - v2.e[1], v.e[2] - v2.e[2]}}
 }
 
-func (v *Vec3) Mult(v2 Vec3) *Vec3 {
-	return &Vec3{e: [3]float64{v.e[0] * v2.e[0], v.e[1] * v2.e[1], v.e[2] * v2.e[2]}}
+func (v *Vec3) Mult(v2 Vec3) Vec3 {
+	return Vec3{e: [3]float64{v.e[0] * v2.e[0], v.e[1] * v2.e[1], v.e[2] * v2.e[2]}}
 }
 
-func (v *Vec3) Div(v2 Vec3) *Vec3 {
-	return &Vec3{e: [3]float64{v.e[0] / v2.e[0], v.e[1] / v2.e[1], v.e[2] / v2.e[2]}}
+func (v *Vec3) Div(v2 Vec3) Vec3 {
+	return Vec3{e: [3]float64{v.e[0] / v2.e[0], v.e[1] / v2.e[1], v.e[2] / v2.e[2]}}
 }
 
 // Scalar Operators
 
-func (v *Vec3) ScalarMult(t float64) *Vec3 {
-	return &Vec3{e: [3]float64{v.e[0] * t, v.e[1] * t, v.e[2] * t}}
+func (v *Vec3) ScalarMult(t float64) Vec3 {
+	return Vec3{e: [3]float64{v.e[0] * t, v.e[1] * t, v.e[2] * t}}
 }
 
-func (v *Vec3) ScalarDiv(t float64) *Vec3 {
-	return &Vec3{e: [3]float64{v.e[0] / t, v.e[1] / t, v.e[2] / t}}
+func (v *Vec3) ScalarDiv(t float64) Vec3 {
+	return Vec3{e: [3]float64{v.e[0] / t, v.e[1] / t, v.e[2] / t}}
 }
 
 // Complex Operators
@@ -67,8 +67,8 @@ func (v *Vec3) Dot(v2 Vec3) float64 {
 	return v.e[0]*v2.e[0] + v.e[1]*v2.e[1] + v.e[2]*v2.e[2]
 }
 
-func (v *Vec3) Cross(v2 Vec3) *Vec3 {
-	return &Vec3{e: [3]float64{(v.e[1]*v2.e[2] - v.e[2]*v2.e[1]), -(v.e[0]*v2.e[2] - v.e[2]*v2.e[0]), (v.e[0]*v2.e[1] - v.e[1]*v2.e[0])}}
+func (v *Vec3) Cross(v2 Vec3) Vec3 {
+	return Vec3{e: [3]float64{(v.e[1]*v2.e[2] - v.e[2]*v2.e[1]), -(v.e[0]*v2.e[2] - v.e[2]*v2.e[0]), (v.e[0]*v2.e[1] - v.e[1]*v2.e[0])}}
 }
 
 // Attributes
