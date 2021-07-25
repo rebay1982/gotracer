@@ -17,7 +17,7 @@ func (r *Ray) GetDirection() Vec3 {
 	return r.b
 }
 
-func (r *Ray) PointAtParameter(t float64) Vec3 {
-	return r.a.Add(r.b.ScalarMult(t)) // A + t*B
+func (r *Ray) PointAtParameter(t float64) *Vec3 {
+	return r.a.Add(*r.b.ScalarMult(t)) // A + t*B
 
 }
