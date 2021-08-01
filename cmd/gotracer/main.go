@@ -10,6 +10,13 @@ import (
 
 // Pretty crappy, if only we had some form of operator overload.
 func color(r *gt.Ray) *gt.Vec3 {
+
+	// If we hit the sphere, return red.
+	if hitSphere(gt.NewVec3(0.0, 0.0, -1), 0.5, r) {
+		return gt.NewVec3(1, 0, 0)
+	}
+
+	// If not, run the background color routine.
 	direction := r.GetDirection()
 	unitDirection := direction.GetUnitVector()
 
@@ -20,6 +27,21 @@ func color(r *gt.Ray) *gt.Vec3 {
 	bVec := gt.NewVec3(0.5, 0.7, 1.0).ScalarMult(t)
 
 	return aVec.Add(*bVec)
+}
+
+// hitSphere function to verify if a gt.Ray hits a sphere described by the
+//
+func hitSphere(center *gt.Vec3, radius float64, r *gt.Ray) bool {
+	origin := r.GetOrigin()
+	oc := origin.Sub(*center)
+
+	direction := r.GetDirection()
+	var a float64 = direction.Dot(r.GetDirection())
+	var b float64 = 2.0 * oc.Dot(r.GetDirection())
+	var c float64 = oc.Dot(*oc) - (radius * radius)
+
+	var discriminant float64 = b*b - 4*a*c
+	return (discriminant > 0)
 }
 
 func main() {
