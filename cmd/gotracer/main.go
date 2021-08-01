@@ -3,6 +3,7 @@ package main
 import (
 	//	"bufio"
 	"fmt"
+	"math"
 	"os"
 
 	gt "github.com/rebay1982/gotracer/internal/gotracer"
@@ -10,17 +11,20 @@ import (
 
 // Pretty crappy, if only we had some form of operator overload.
 func color(r *gt.Ray) *gt.Vec3 {
+	sphereCenter := gt.NewVec3(0.0, 0.0, -1.0)
+	t := hitSphere(sphereCenter, 0.5, r)
 
-	// If we hit the sphere, return red.
-	if hitSphere(gt.NewVec3(0.0, 0.0, -1), 0.5, r) {
-		return gt.NewVec3(1, 0, 0)
+	if t > 0.0 {
+		// Get the normal vector
+		N := r.PointAtParameter(t).Sub(*sphereCenter).GetUnitVector()
+		return gt.NewVec3(N.X()+1.0, N.Y()+1.0, N.Z()+1.0).ScalarMult(0.5)
 	}
 
 	// If not, run the background color routine.
 	direction := r.GetDirection()
 	unitDirection := direction.GetUnitVector()
 
-	t := 0.5 * (unitDirection.Y() + 1.0)
+	t = 0.5 * (unitDirection.Y() + 1.0)
 
 	aVecScalar := 1.0 - t
 	aVec := gt.NewVec3(aVecScalar, aVecScalar, aVecScalar)
@@ -31,7 +35,7 @@ func color(r *gt.Ray) *gt.Vec3 {
 
 // hitSphere function to verify if a gt.Ray hits a sphere described by the
 //
-func hitSphere(center *gt.Vec3, radius float64, r *gt.Ray) bool {
+func hitSphere(center *gt.Vec3, radius float64, r *gt.Ray) float64 {
 	origin := r.GetOrigin()
 	oc := origin.Sub(*center)
 
@@ -41,7 +45,18 @@ func hitSphere(center *gt.Vec3, radius float64, r *gt.Ray) bool {
 	var c float64 = oc.Dot(*oc) - (radius * radius)
 
 	var discriminant float64 = b*b - 4*a*c
-	return (discriminant > 0)
+
+	// If the discriminant is negative, we're looking at the sphere's surface
+	// from inside the sphere.
+	if discriminant < 0 {
+		return -1.0
+
+	} else {
+		// See chapter 6.2 from here:
+		// https://raytracing.github.io/books/RayTracingInOneWeekend.html#addingasphere/creatingourfirstraytracedimage
+		return (-b - math.Sqrt(discriminant)) / (2.0 * a)
+
+	}
 }
 
 func main() {
