@@ -27,28 +27,30 @@ func (s *Sphere) Hit(r Ray, tMin float64, tMax float64, record HitRecord) bool {
 
 	// If the discriminant is negative, we're looking at the sphere's surface
 	// from inside the sphere. (or behind it)
-	if discriminant < 0 {
-		return false
-
-	} else {
+	if discriminant > 0 {
 
 		// We're going to find the nearest root that falls between tMin and tMax
 		var sqrtd = math.Sqrt(discriminant)
+
 		var root = (-half_b - sqrtd) / a
+		if root >= tMin && root <= tMax {
+			record.t = root
+			record.point = *r.PointAtParameter(record.t)
+			record.normal = *record.point.Sub(s.center).ScalarDiv(s.radius)
 
-		if root < tMin || root > tMax {
-			root = (-half_b + sqrtd) / a
+			return true
 
-			if root < tMin || root > tMax {
-				return false
-
-			}
 		}
 
-		record.t = root
-		record.point = *r.PointAtParameter(record.t)
-		record.normal = *record.point.Sub(s.center).ScalarDiv(s.radius)
+		root = (-half_b + sqrtd) / a
+		if root >= tMin && root <= tMax {
+			record.t = root
+			record.point = *r.PointAtParameter(record.t)
+			record.normal = *record.point.Sub(s.center).ScalarDiv(s.radius)
 
-		return true
+			return true
+		}
 	}
+
+	return false
 }
