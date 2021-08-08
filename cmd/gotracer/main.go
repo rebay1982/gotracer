@@ -40,11 +40,11 @@ func hitSphere(center *gt.Vec3, radius float64, r *gt.Ray) float64 {
 	oc := origin.Sub(*center)
 
 	direction := r.GetDirection()
-	var a float64 = direction.Dot(r.GetDirection())
-	var b float64 = 2.0 * oc.Dot(r.GetDirection())
-	var c float64 = oc.Dot(*oc) - (radius * radius)
+	var a float64 = direction.SquaredLength()
+	var half_b float64 = oc.Dot(r.GetDirection())
+	var c float64 = oc.SquaredLength() - (radius * radius)
 
-	var discriminant float64 = b*b - 4*a*c
+	var discriminant float64 = half_b*half_b - a*c
 
 	// If the discriminant is negative, we're looking at the sphere's surface
 	// from inside the sphere.
@@ -52,10 +52,9 @@ func hitSphere(center *gt.Vec3, radius float64, r *gt.Ray) float64 {
 		return -1.0
 
 	} else {
-		// See chapter 6.2 from here:
+		// See chapter 6.2 from here for optimizations:
 		// https://raytracing.github.io/books/RayTracingInOneWeekend.html#addingasphere/creatingourfirstraytracedimage
-		return (-b - math.Sqrt(discriminant)) / (2.0 * a)
-
+		return (-half_b - math.Sqrt(discriminant)) / a
 	}
 }
 
