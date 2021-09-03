@@ -34,19 +34,18 @@ func (s *Sphere) Hit(r Ray, t_min float64, t_max float64, record *HitRecord) boo
 
 		var root = (-half_b - sqrtd) / a
 		if root >= t_min && root <= t_max {
-			record.t = root
-			record.point = *r.PointAtParameter(record.t)
-			record.normal = *record.point.Sub(s.center).ScalarDiv(s.radius)
+			record.T = root
+			record.Point = *r.PointAtParameter(record.T)
+			record.Normal = *record.Point.Sub(s.center).ScalarDiv(s.radius)
 
 			return true
-
 		}
 
 		root = (-half_b + sqrtd) / a
 		if root >= t_min && root <= t_max {
-			record.t = root
-			record.point = *r.PointAtParameter(record.t)
-			record.normal = *record.point.Sub(s.center).ScalarDiv(s.radius)
+			record.T = root
+			record.Point = *r.PointAtParameter(record.T)
+			record.Normal = *record.Point.Sub(s.center).ScalarDiv(s.radius)
 
 			return true
 		}

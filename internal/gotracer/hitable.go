@@ -1,9 +1,9 @@
 package gotracer
 
 type HitRecord struct {
-	point  Vec3
-	normal Vec3
-	t      float64
+	Point  Vec3
+	Normal Vec3
+	T      float64
 }
 
 type Hitable interface {
