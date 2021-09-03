@@ -1,7 +1,5 @@
 package gotracer
 
-import "fmt"
-
 type HitableList struct {
 	List     []Hitable
 	ListSize int
