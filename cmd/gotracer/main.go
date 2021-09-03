@@ -1,7 +1,6 @@
 package main
 
 import (
-	//	"bufio"
 	"fmt"
 	"math"
 	"os"
@@ -9,52 +8,23 @@ import (
 	gt "github.com/rebay1982/gotracer/internal/gotracer"
 )
 
-// Pretty crappy, if only we had some form of operator overload.
-func color(r *gt.Ray) *gt.Vec3 {
-	sphereCenter := gt.NewVec3(0.0, 0.0, -1.0)
-	t := hitSphere(sphereCenter, 0.5, r)
+func color(r *gt.Ray, world gt.Hitable) *gt.Vec3 {
+	var rec gt.HitRecord
 
-	if t > 0.0 {
-		// Get the normal vector
-		N := r.PointAtParameter(t).Sub(*sphereCenter).GetUnitVector()
-		return gt.NewVec3(N.X()+1.0, N.Y()+1.0, N.Z()+1.0).ScalarMult(0.5)
-	}
-
-	// If not, run the background color routine.
-	direction := r.GetDirection()
-	unitDirection := direction.GetUnitVector()
-
-	t = 0.5 * (unitDirection.Y() + 1.0)
-
-	aVecScalar := 1.0 - t
-	aVec := gt.NewVec3(aVecScalar, aVecScalar, aVecScalar)
-	bVec := gt.NewVec3(0.5, 0.7, 1.0).ScalarMult(t)
-
-	return aVec.Add(*bVec)
-}
-
-// hitSphere function to verify if a gt.Ray hits a sphere described by the
-//
-func hitSphere(center *gt.Vec3, radius float64, r *gt.Ray) float64 {
-	origin := r.GetOrigin()
-	oc := origin.Sub(*center)
-
-	direction := r.GetDirection()
-	var a float64 = direction.SquaredLength()
-	var half_b float64 = oc.Dot(r.GetDirection())
-	var c float64 = oc.SquaredLength() - (radius * radius)
-
-	var discriminant float64 = half_b*half_b - a*c
-
-	// If the discriminant is negative, we're looking at the sphere's surface
-	// from inside the sphere.
-	if discriminant < 0 {
-		return -1.0
+	if world.Hit(*r, 0.0, math.MaxFloat64, &rec) {
+		//fmt.Println("Hit something")
+		return gt.NewVec3(rec.Normal.X()+1.0, rec.Normal.Y()+1.0, rec.Normal.Z()+1.0).ScalarMult(0.5)
 
 	} else {
-		// See chapter 6.2 from here for optimizations:
-		// https://raytracing.github.io/books/RayTracingInOneWeekend.html#addingasphere/creatingourfirstraytracedimage
-		return (-half_b - math.Sqrt(discriminant)) / a
+		direction := r.GetDirection()
+		unitDirection := direction.GetUnitVector()
+
+		t := 0.5 * (unitDirection.Y() + 1.0)
+		aVecScalar := 1.0 - t
+		aVec := gt.NewVec3(aVecScalar, aVecScalar, aVecScalar)
+		bVec := gt.NewVec3(0.5, 0.7, 1.0).ScalarMult(t)
+
+		return aVec.Add(*bVec)
 	}
 }
 
@@ -79,16 +49,21 @@ func main() {
 	var horizontal *gt.Vec3 = gt.NewVec3(4.0, 0.0, 0.0)
 	var vertical *gt.Vec3 = gt.NewVec3(0.0, 2.0, 0.0)
 
+	var worldList []gt.Hitable = make([]gt.Hitable, 2)
+	worldList[0] = gt.NewSphere(*gt.NewVec3(0.0, 0.0, -1.0), 0.5)
+	worldList[1] = gt.NewSphere(*gt.NewVec3(0.0, -100.5, -1.0), 100)
+
+	var world gt.Hitable = gt.NewHitableList(worldList, 2)
+
 	for j := ny - 1; j >= 0; j-- {
 		for i := 0; i < nx; i++ {
 
 			var u float64 = float64(i) / float64(nx)
 			var v float64 = float64(j) / float64(ny)
-
 			direction := lowerLeftCorner.Add(*horizontal.ScalarMult(u)).Add(*vertical.ScalarMult(v))
-
 			ray := gt.NewRay(*origin, *direction)
-			colour := color(ray) //gt.NewVec3(float64(i)/float64(nx), float64(j)/float64(ny), 0.2)
+
+			colour := color(ray, world) //gt.NewVec3(float64(i)/float64(nx), float64(j)/float64(ny), 0.2)
 
 			var ir = int(255.99 * colour.R())
 			var ig = int(255.99 * colour.G())
