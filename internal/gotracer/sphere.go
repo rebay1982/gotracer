@@ -14,7 +14,7 @@ func NewSphere(c Vec3, r float64) *Sphere {
 
 }
 
-func (s *Sphere) Hit(r Ray, tMin float64, tMax float64, record HitRecord) bool {
+func (s *Sphere) Hit(r Ray, t_min float64, t_max float64, record *HitRecord) bool {
 	origin := r.GetOrigin()
 	oc := origin.Sub(s.center)
 
@@ -29,11 +29,11 @@ func (s *Sphere) Hit(r Ray, tMin float64, tMax float64, record HitRecord) bool {
 	// from inside the sphere. (or behind it)
 	if discriminant > 0 {
 
-		// We're going to find the nearest root that falls between tMin and tMax
+		// We're going to find the nearest root that falls between t_min and t_max
 		var sqrtd = math.Sqrt(discriminant)
 
 		var root = (-half_b - sqrtd) / a
-		if root >= tMin && root <= tMax {
+		if root >= t_min && root <= t_max {
 			record.t = root
 			record.point = *r.PointAtParameter(record.t)
 			record.normal = *record.point.Sub(s.center).ScalarDiv(s.radius)
@@ -43,7 +43,7 @@ func (s *Sphere) Hit(r Ray, tMin float64, tMax float64, record HitRecord) bool {
 		}
 
 		root = (-half_b + sqrtd) / a
-		if root >= tMin && root <= tMax {
+		if root >= t_min && root <= t_max {
 			record.t = root
 			record.point = *r.PointAtParameter(record.t)
 			record.normal = *record.point.Sub(s.center).ScalarDiv(s.radius)
